@@ -1,0 +1,766 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>  | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github.css' type='text/css' rel='stylesheet' />
+  <link href='assets/split.css' type='text/css' rel='stylesheet' />
+</head>
+<body class='documentation m0'>
+    <div class='flex'>
+      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'></h3>
+          <div class='mb1'><code></code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#lilypondadapterjs'
+                  class="">
+                  lilyPondAdapter.js
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setscoreparameters'
+                  class="">
+                  setScoreParameters
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setcpmelodyparameters'
+                  class="">
+                  setCPMelodyParameters
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setchoralescoreparameters'
+                  class="">
+                  setChoraleScoreParameters
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setgrandstaffscoreparameters'
+                  class="">
+                  setGrandStaffScoreParameters
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#createlilypondfile'
+                  class="">
+                  createLilyPondFile
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#translatelilytotonejs'
+                  class="">
+                  translateLilyToToneJS
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#getlilyentryscoreparams'
+                  class="">
+                  getLilyEntryScoreParams
+                  
+                </a>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div id='split-right' class='relative overflow-auto height-viewport-100'>
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='lilypondadapterjs'>
+      lilyPondAdapter.js
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This module is a IIFE (Immediately Invoked Function Expression) and
+it returns a var with the name of lpAdapter.  This document contains its public API.
+The lilyPondAdapter.js module contains functions used to translate from
+lilypond format to Tone.js and vice versa.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>lilyPondAdapter.js</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>use the script tag to add <span class="hljs-keyword">this</span> file
+&lt;script src=<span class="hljs-string">"path/to/lilyPondAdapter.js"</span>&gt;<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span></pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setscoreparameters'>
+      setScoreParameters
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this sets the score values on the lilyPondAdapter object</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setScoreParameters(json: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): any</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>json</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>any</code>:
+        nothing
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// an example of the json parameter</span>
+<span class="hljs-keyword">var</span> jsonConfig = {
+    <span class="hljs-string">"jsonType"</span>: <span class="hljs-string">"ScaleAssignment"</span>,
+	<span class="hljs-string">"keySig"</span>: <span class="hljs-string">"c \\major"</span>,
+	<span class="hljs-string">"clef"</span>: <span class="hljs-string">"treble"</span>,
+	<span class="hljs-string">"timeSig"</span>: <span class="hljs-string">"4/4"</span>,
+	<span class="hljs-string">"title"</span>: <span class="hljs-string">"Assignment"</span>,
+	<span class="hljs-string">"name"</span>: <span class="hljs-string">"Assignment on "</span>+timeStamp,
+	<span class="hljs-string">"notes"</span>: notes,
+	<span class="hljs-string">"durations"</span>: durations,
+	<span class="hljs-string">"pickup"</span>: <span class="hljs-string">""</span>,
+	<span class="hljs-string">"pickupLength"</span>: <span class="hljs-string">""</span>,
+	<span class="hljs-string">"tempo"</span>: <span class="hljs-string">' \"moderato\" 4 = 90'</span>,
+	<span class="hljs-string">"opus"</span>: assignmentNumber,
+	<span class="hljs-string">"composer"</span>: studentName
+};
+lpAdapter.setScoreParameters(jsonConfig);</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setcpmelodyparameters'>
+      setCPMelodyParameters
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this sets the score values on the lilyPondAdapter object</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setCPMelodyParameters(json: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): any</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>json</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>any</code>:
+        nothing
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// after the auto generated melody is created the following</span>
+<span class="hljs-comment">// json is created as a parameter.</span>
+<span class="hljs-keyword">var</span> jsonConfig = {
+  <span class="hljs-string">"jsonType"</span>: <span class="hljs-string">"CPMelody"</span>,
+ <span class="hljs-string">"keySig"</span>: keySig,
+ <span class="hljs-string">"clef"</span>: clef,
+ <span class="hljs-string">"timeSig"</span>: timeSig,
+ <span class="hljs-string">"title"</span>: title,
+ <span class="hljs-string">"name"</span>: title+<span class="hljs-string">" on "</span>+timeStamp,
+ <span class="hljs-string">"notes"</span>: notes,
+ <span class="hljs-string">"durations"</span>: durations,
+ <span class="hljs-string">"notes2"</span>: notes2,
+ <span class="hljs-string">"durations2"</span>: durations2,
+ <span class="hljs-string">"diceStaff"</span>: myOrnStaff,
+ <span class="hljs-string">"pickup"</span>: pickup,
+ <span class="hljs-string">"pickupLength"</span>: <span class="hljs-string">""</span>,
+ <span class="hljs-string">"tempo"</span>: tempo
+};
+lpAdapter.setCPMelodyParameters(jsonConfig);</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setchoralescoreparameters'>
+      setChoraleScoreParameters
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this sets the chorale score values on the lilyPondAdapter object</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setChoraleScoreParameters(json: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): any</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>json</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>any</code>:
+        nothing
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// example of json parameter for 4-part chorale</span>
+<span class="hljs-keyword">var</span> jsonConfig = {
+  <span class="hljs-string">"jsonType"</span>: <span class="hljs-string">"chorale"</span>,
+  <span class="hljs-string">"keySig"</span>: keySig,
+  <span class="hljs-string">"clef"</span>: clef,
+  <span class="hljs-string">"timeSig"</span>: timeSig,
+  <span class="hljs-string">"title"</span>: title,
+  <span class="hljs-string">"name"</span>: title+<span class="hljs-string">" on "</span>+timeStamp,
+  <span class="hljs-string">"notes1"</span>: voicesNotesAndDurations[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations1"</span>: voicesNotesAndDurations[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>].slice(),
+
+  <span class="hljs-string">"notes2"</span>: voicesNotesAndDurations[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations2"</span>: voicesNotesAndDurations[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>].slice(),
+
+  <span class="hljs-string">"notes3"</span>: voicesNotesAndDurations[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations3"</span>: voicesNotesAndDurations[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>].slice(),
+
+  <span class="hljs-string">"notes4"</span>: voicesNotesAndDurations[<span class="hljs-number">3</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations4"</span>: voicesNotesAndDurations[<span class="hljs-number">3</span>][<span class="hljs-number">1</span>].slice(),
+
+  <span class="hljs-string">"pickup"</span>: pickup,
+  <span class="hljs-string">"pickupLength"</span>: <span class="hljs-string">""</span>,
+  <span class="hljs-string">"tempo"</span>: tempo
+};
+lpAdapter.setChoraleScoreParameters(jsonConfig);</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setgrandstaffscoreparameters'>
+      setGrandStaffScoreParameters
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this sets the grand staff score values on the lilyPondAdapter object</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setGrandStaffScoreParameters(json1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>, json2: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): any</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>json1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>json2</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>any</code>:
+        nothing
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// example of json parameter for grand staff score</span>
+<span class="hljs-keyword">var</span> json conFig = {
+  <span class="hljs-string">"jsonType"</span>: <span class="hljs-string">"pianoCadence"</span>,
+  <span class="hljs-string">"keySig"</span>: keySig,
+  <span class="hljs-string">"clef"</span>: clef,
+  <span class="hljs-string">"timeSig"</span>: timeSig,
+  <span class="hljs-string">"title"</span>: title,
+  <span class="hljs-string">"name"</span>: title+<span class="hljs-string">" on "</span>+timeStamp,
+  <span class="hljs-string">"notes1"</span>: LeftRightNotesAndDurations[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations1"</span>: LeftRightNotesAndDurations[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>].slice(),
+  <span class="hljs-string">"notes2"</span>: LeftRightNotesAndDurations[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>].slice(),
+  <span class="hljs-string">"durations2"</span>: LeftRightNotesAndDurations[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>].slice(),
+  <span class="hljs-string">"pickup"</span>: pickup,
+  <span class="hljs-string">"pickupLength"</span>: <span class="hljs-string">""</span>,
+  <span class="hljs-string">"tempo"</span>: tempo,
+  <span class="hljs-string">"opus"</span>: assignmentNumber,
+  <span class="hljs-string">"composer"</span>: studentName
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='createlilypondfile'>
+      createLilyPondFile
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this function creates a lilypond file using the prevously save data</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>createLilyPondFile(evaluateBool: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>evaluateBool</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>)</code>
+	    true includes an evaluation of the score compared to the correct answer
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>:
+        the lilypond file
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='translatelilytotonejs'>
+      translateLilyToToneJS
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this function takes a lilypond string and turns it into two arrays of notes and durations used with ToneJS</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>translateLilyToToneJS(lilyNoteCode: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>lilyNoteCode</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></code>:
+        multi-dimensional array of notes and durations
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">var</span> lilycode = <span class="hljs-string">"\\relative c' {c4 d e f g1}"</span>;
+<span class="hljs-keyword">var</span> results = translateLilyToToneJS(lilycode);
+<span class="hljs-comment">// results[0] = ["C4","D4","E4","F4","G4"]</span>
+<span class="hljs-comment">// results[1] = ["4n","4n","4n","4n","1n"]</span></pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='getlilyentryscoreparams'>
+      getLilyEntryScoreParams
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>this function returns the keySig, tempo and timeSig from the lilyPondAdapter object</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>getLilyEntryScoreParams(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+      </div>
+    </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/split.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>
