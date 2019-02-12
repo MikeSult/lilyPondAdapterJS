@@ -85,6 +85,11 @@ var lpAdapter = (function() {
     var myOpus;
     var errorIndexArray;
     var errorIndexArray2;
+    
+    var myComments = [];
+    var commentIndex = 0;
+    var comment = "";
+
 
     var myJSONType2;
     var myFileName2;
@@ -1907,11 +1912,44 @@ function makeChoraleScore() {
                 continue;
             }
 
+            // look for comments (multi-line)
+            if( oneToken.includes('%{') )  {
+                // gather the comment text
+                i++; 
+                oneToken = noteTokens[i].slice();
+                comment = "";
+                while(!oneToken.includes('%}') ) {
+                    comment += " " + oneToken;
+                    i++; 
+                    oneToken = noteTokens[i].slice();
+                }
+                // we store the comment but don't do anything with it
+                myComments[commentIndex] = comment;
+                console.log('comment='+comment);
+                commentIndex += 1;
+                comment = "";
+                continue;
+            }
+
+/*-----------------------------
+            // look for comments (single-line)
+            if( oneToken.includes('%') )  {
+                // gather the comment text
+                var comment = "";
+                while(!oneToken.includes('%}') ) {
+                    lilyTupletNotes.push(oneToken);
+                    i++; 
+                    comment += " "+noteTokens[i].slice();
+                }
+                continue;
+            }
+//-----------------------------*/
 
             // ignore the braces
             if( (oneToken.includes('{') || oneToken.includes('}') ) && !isLilyTuplet)  {
                 continue
             }
+
 
             // look for chords
             if( oneToken.includes('<')  ) {
