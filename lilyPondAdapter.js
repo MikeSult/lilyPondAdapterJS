@@ -754,17 +754,25 @@ needs work for rests
     }
     function setPickupMeasureLength(pickupLen) {
 //        console.log('setPickupMeasureLength(): pickupLen='+pickupLen);
-        myPickupMeasureLength = pickupLen? getLilyDuration(pickupLen): '';
+//        myPickupMeasureLength = pickupLen? getLilyDuration(pickupLen): '';
+        var len = durationToLilyDuration[pickupLen]
+        myPickupMeasureLength = len? len: '';
     }
+
+    function setPickupMeasure(pickupMeasure, pickupLen) {
+        myPickupMeasure = '';
+}
+/*----------------
     function setPickupMeasure(pickupMeasure, pickupLen) {
         myPickupMeasure = pickupMeasure? pickupMeasure: '';
-        // if the pickup notes were note passed in then get them from myNotes
+        // if the pickup notes were not passed in then get them from myNotes
         if(myPickupMeasure == "" && pickupLen !== '') {
             // calculate the pickup notes and recalculate the notes array
             console.log('typeof(myNotes)='+typeof(myNotes));
             myPickupMeasure = calcPickupNotes(pickupLen, myNotes, myDurations);
         }
     }
+//----------------------------------*/
     function setClef(clef) {
         myClef = clef? clef: 'treble';
     }    
