@@ -124,7 +124,12 @@ var lpAdapter = (function() {
     var lilyKeySignature = '';
     var lilyTempo = '';
     var lilyTupletNotes = [];
-    
+
+// newLilyScore feature 
+    var mylilyInputNotes1 = '';
+    var mylilyInputNotes2 = '';
+    var mylilyInputNotes3 = '';
+    var mylilyInputNotes4 = '';
     
     // pitches = list of pitch_OctaveNumbers 
     // durations = list of rhythms, possibly containing rests
@@ -1014,9 +1019,14 @@ needs work for rests
         myJSONType = json.jsonType? json.jsonType: 'chorale';
         setNotesAndDurations(json.notes1, json.durations1);
         setNotesAndDurations2(json.notes2, json.durations2);
+//        console.log('json.lilyInputNotes1='+json.lilyInputNotes1);
+        setLilyInput1(json.lilyInputNotes1);
+        setLilyInput2(json.lilyInputNotes2);
         if(myJSONType === 'chorale') {
           setNotesAndDurations3(json.notes3, json.durations3);
           setNotesAndDurations4(json.notes4, json.durations4);
+          setLilyInput3(json.lilyInputNotes3);
+          setLilyInput4(json.lilyInputNotes4);
         }
         setKeySignatures(json.keySig);
         setRomanNumerals(json.romanNumerals)
@@ -1116,6 +1126,19 @@ needs work for rests
         myDurations4 = durations.slice();
     }
 
+    function setLilyInput1(lilyNotes) {
+        mylilyInputNotes1 = lilyNotes.slice();
+    }
+    function setLilyInput2(lilyNotes) {
+        mylilyInputNotes2 = lilyNotes.slice();
+    }
+    function setLilyInput3(lilyNotes) {
+        mylilyInputNotes3 = lilyNotes.slice();
+    }
+    function setLilyInput4(lilyNotes) {
+        mylilyInputNotes4 = lilyNotes.slice();
+    }
+
     function setMelody2(melody) {
         var notes = [];
         var durs = [];
@@ -1133,7 +1156,7 @@ needs work for rests
         myTimeSignature2 = time? time: '4/4';
     }
     function setKeySignatures2(key) {
-        myKeySignatures2 = key? key: ['c \\major','c \\major','c \\major','c \\major','c \\major'];
+        myKeySignatures2 = key? [key]: ['c \\major','c \\major','c \\major','c \\major','c \\major'];
 //        console.log('myKeySignatures2='+myKeySignatures2)
     }
     function setRomanNumerals2(num) {
@@ -1491,7 +1514,9 @@ function makeChoraleScore() {
     var altoInput = makeLilyNotes(myNotes2, myDurations2, myKeySignatures, myRomanNumerals);
     var tenorInput = makeLilyNotes(myNotes3, myDurations3, myKeySignatures, myRomanNumerals);
     var bassInput = makeLilyNotes(myNotes4, myDurations4, myKeySignatures, myRomanNumerals);
+    
 //    console.log('myNotes='+myNotes+' myDurations='+myDurations+' sopranoInput='+sopranoInput);
+
 	var choraleTemplate = 'Timeline = {   \n' +
 	'  \\time ' + theTimeSig + '  \n' +  
 	'  \\tempo ' + theTempo + '  \n';
@@ -1504,17 +1529,31 @@ function makeChoraleScore() {
 //	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||" \\break  \n' +
 //	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||"  \n' +
 
+//var useNewCode = true;
+
+if(mylilyInputNotes1) {
 	choraleTemplate += '} \n' + 
-	
+
+	'SopranoMusic = ' + mylilyInputNotes1 + '\n' +
+
+	'\nAltoMusic = ' + mylilyInputNotes2 +  '\n' +
+
+	'\nTenorMusic = ' + mylilyInputNotes3 + '\n' +
+
+	'\nBassMusic =  ' + mylilyInputNotes4 + '\n';
+
+} else {
+	choraleTemplate += '} \n' + 
+
 	'SopranoMusic = ' + sopranoInput + 
 	
 	'\nAltoMusic = ' + altoInput +
 	
 	'\nTenorMusic = ' + tenorInput +
 	
-	'\nBassMusic =  ' + bassInput +
-	
-	'\nglobal = { \\key ' + myKeySignatures[0] + 
+	'\nBassMusic =  ' + bassInput;
+}
+    choraleTemplate += '\nglobal = { \\key ' + myKeySignatures[0] + 
 	
 	'\n} \n' +
 	
@@ -1659,15 +1698,15 @@ function makeChoraleScore() {
 //----------------------------
     var lilyDurationToToneJSDuration = {
 //        "1n+2n": "1.",
-	"1" : "1n", 
+	    "1" : "1n", 
         "2.": "2n + 4n", "2..": "2n + 4n + 8n",
-	"2" : "2n", // "2t" : "2",
+	    "2" : "2n", // "2t" : "2",
         "4.": "4n + 8n", "4..": "4n + 8n + 16n",
-	"4" : "4n", // "4t" :  "4",
+	    "4" : "4n", // "4t" :  "4",
         "8.": "8n + 16n", "8": "8n", // "8t" : "8",
-	"16.": "16n + 32n", "16": "16n", // "16t" : "16",
-	"32.": "32n + 64n", "32": "32n",
-	"64.": "64n + 128n", "64": "64n",
+	    "16.": "16n + 32n", "16": "16n", // "16t" : "16",
+	    "32.": "32n + 64n", "32": "32n",
+	    "64.": "64n + 128n", "64": "64n",
 
 // tied notes ---------------------
         "1~2.": "1n + 2n + 4n", "1~2": "1n + 2n", "1~4" : "1n + 4n",
@@ -1761,6 +1800,138 @@ function makeChoraleScore() {
     var relativeOctave = "c''";
     var relativeCurrentOctave = "c''";
     
+// filters non-notes from the lilyCode inputString
+// i.e. c4\staccato c\mordent b2\turn c1\fermata
+    function filterLilyCode(lilyCode) {
+        var filter = /\\/;
+        var matched_element;
+        var new_element;
+        var elements;
+        var filteredLily = [];
+        var trimmedLily = lilyCode.trim();
+        var noteTokens = trimmedLily.split(/\s+/g); // split at white space
+        // look for noteTokens that have a '\' (filter has to escape using \\)
+//        var new_tokens = noteTokens.forEach(function(element, index, array) {
+        noteTokens.forEach(function(element, index, array) {
+            matched_element = filter.exec(element)
+            if(matched_element) {
+                if( element.includes('relative') || element.includes('partial')
+                    || element.includes('tempo') || element.includes('time')
+                    || element.includes('key') || element.includes('tuplet')
+                    || element.includes('major') || element.includes('minor') 
+//                    || element.includes('bar')
+                    ) {
+                    new_element = element;
+                } else {
+//                    if( element.includes('fermata') ) {
+//                        console.log('fermata found an index='+index);
+//                    }
+                    elements = element.split('\\');
+                    new_element = elements[0];
+                }
+            } else {
+                if( element.includes('"|."') ) {
+                    new_element = '';        
+                } else {
+                    new_element = element;
+                }
+            }
+            filteredLily.push(new_element);
+        });
+        return filteredLily.join(' ');
+    }
+
+//---------------------------------------------------------------------
+function lilyNoteToToneJSDuration(lilynote) {
+    var lilyDuration;
+    var toneJSDuration;
+    var myLilynote = lilynote.slice();
+    // chop off the pitch to get the lily duration
+    if( myLilynote.includes('es') || myLilynote.includes('is') ) {
+        lilyDuration = myLilynote.slice(3);
+    } else {
+        lilyDuration = myLilynote.slice(1);        
+    }
+    if( lilyDuration.includes("''") || lilyDuration.includes(",,") ) {
+        lilyDuration = lilyDuration.slice(2);            
+    } else if(lilyDuration.includes("'") || lilyDuration.includes(",") ) {
+        lilyDuration = lilyDuration.slice(1);            
+    }
+    toneJSDuration = lilyDurationToToneJSDuration[lilyDuration];
+    return toneJSDuration;
+}
+
+function calcPhraseLengths(lilyCode, meter, marker) {
+    var myMarker = marker? marker: 'fermata';
+    var trimmedLily = lilyCode.trim();
+    var noteTokens = trimmedLily.split(/\s+/g); // split at white space
+    var phrases_start_end = [];
+    var one_phrase = [];
+    var one_phrase_str = '';
+    var last_location = Tone.Time('0').toBarsBeatsSixteenths();
+    var this_location = Tone.Time('0').toBarsBeatsSixteenths();
+    var runningTotal = Tone.Time('0');
+    var current_duration = Tone.Time('0');
+    var possible_duration;
+    var note = '';
+    var elements = [];
+    var is_a_note = false;
+    var validNotes = ['a','b','c','d','e','f','g'];
+    var first_note = false;
+    
+    var myMeter = meter? meter: 4;
+    Tone.Transport.timeSignature = myMeter;
+    
+    noteTokens.forEach( (element, index) => {
+        // check if it is a note
+        if(element == "{") {
+            first_note = true;
+        }
+        var is_a_note = validNotes.includes(element[0]);
+        if(is_a_note === false || !first_note) { 
+            ; // continue
+        } else {
+            if (element.includes(myMarker)) {
+                console.log('fermata found at index='+index);
+
+                elements = element.split('\\');
+                note = elements[0];
+                // decipher duration and use runningTotal to calc this_location            
+                possible_duration = lilyNoteToToneJSDuration(note);
+                if(possible_duration) {
+                    current_duration = possible_duration;
+                }
+                
+                runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
+                this_location = Tone.Time(runningTotal).toBarsBeatsSixteenths();
+                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
+                one_phrase = [last_location, this_location];
+                one_phrase_str = one_phrase.join(',');
+                
+                phrases_start_end.push(one_phrase_str);
+                last_location = this_location;
+                one_phrase = [];
+                one_phrase_str = '';
+            } else {
+                note = element;
+                // decipher duration and keep runningTotal
+                possible_duration = lilyNoteToToneJSDuration(note);
+                if(possible_duration) {
+                    current_duration = possible_duration;
+                }
+                runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
+                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
+            }
+//            console.log('note='+note);
+        }        
+    });
+    console.log('phrases_start_end='+phrases_start_end);
+    return phrases_start_end;
+}
+
+//---------------------------------------------------------------------
+
+
 /**
  * this function takes a lilypond string and turns it into two arrays of notes and durations used with ToneJS
  * @param {string} lilyNoteCode 
@@ -1773,7 +1944,12 @@ function makeChoraleScore() {
  */
     function translateLilyToToneJS(lilyNoteCode) {
         // trim white off of each end.
-        var trimmedLily = lilyNoteCode.trim();
+//        var trimmedLily = lilyNoteCode.trim();
+        
+        // filter out non-note (articulation marks etc.)
+        // this sets the module var filteredLily
+        var trimmedLily = filterLilyCode(lilyNoteCode);
+        
         studentLilypondCode = trimmedLily.slice();
         // split it into tokens
         var noteTokens = trimmedLily.split(/\s+/g); // split at white space
@@ -1857,7 +2033,7 @@ function makeChoraleScore() {
                 continue;
             }
 
-            // look for tempo (\tempo)
+            // look for time signature (\time)
             if( oneToken.includes('\\time') || oneToken.includes('\time') ) {
                 // next tokens is time signature as a fraction (3/4)
                 lilyTimeSignature = '';
@@ -3173,6 +3349,7 @@ function noteNameToMIDI(noteName)  {
         setGrandStaffScoreParameters: setGrandStaffScoreParameters,
         setChoraleScoreParameters: setChoraleScoreParameters,
         setCPMelodyParameters: setCPMelodyParameters,
+        calcPhraseLengths: calcPhraseLengths,
         translateLilyToToneJS: translateLilyToToneJS,
         lilyPickupMeasure: lilyPickupMeasure,
         getLilyEntryScoreParams: getLilyEntryScoreParams,
