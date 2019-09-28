@@ -2,7 +2,7 @@
 // lilyPondAdapter.js
 //
 // to create documentation:
-// %: cd ~/Documents/HTML/lilyPondAdapterJS
+// %: cd ~/Documents/Github/lilyPondAdapterJS
 // %: documentation build lilyPondAdapter.js -f html -o docs
 
 //  this module is used to translate data from PracticeRoom pages (Tone.js formats) 
@@ -1842,12 +1842,41 @@ if(mylilyInputNotes1) {
     }
 
 //---------------------------------------------------------------------
+function processTiedNote(tiedNote) {
+    var notes = tiedNote.split('~');
+    var len = notes.length;
+    var myLilynote;
+    var lilyDuration;
+    var lilyArray = [];
+    for(var i=0; i<len; i++) {
+        myLilynote = notes[i];
+
+        // chop off the pitch to get the lily duration
+        if( myLilynote.includes('eses') || myLilynote.includes('isis') ) {
+            lilyDuration = myLilynote.slice(5);    
+        } else if( myLilynote.includes('es') || myLilynote.includes('is') ) {
+            lilyDuration = myLilynote.slice(3);
+        } else {
+            lilyDuration = myLilynote.slice(1);        
+        }
+        if( lilyDuration.includes("''") || lilyDuration.includes(",,") ) {
+            lilyDuration = lilyDuration.slice(2);            
+        } else if(lilyDuration.includes("'") || lilyDuration.includes(",") ) {
+            lilyDuration = lilyDuration.slice(1);            
+        }
+        lilyArray.push(lilyDuration);
+    }
+    return lilyArray.join('~');
+}
+
 function lilyNoteToToneJSDuration(lilynote) {
     var lilyDuration;
     var toneJSDuration;
     var myLilynote = lilynote.slice();
     // chop off the pitch to get the lily duration
-    if( myLilynote.includes('es') || myLilynote.includes('is') ) {
+    if( myLilynote.includes('eses') || myLilynote.includes('isis') ) {
+        lilyDuration = myLilynote.slice(5);    
+    } else if( myLilynote.includes('es') || myLilynote.includes('is') ) {
         lilyDuration = myLilynote.slice(3);
     } else {
         lilyDuration = myLilynote.slice(1);        
@@ -1896,12 +1925,21 @@ function calcPhraseLengths(lilyCode, meter, marker) {
 
                 elements = element.split('\\');
                 note = elements[0];
-                // decipher duration and use runningTotal to calc this_location            
-                possible_duration = lilyNoteToToneJSDuration(note);
-                if(possible_duration) {
-                    current_duration = possible_duration;
+
+                // look for tied notes
+                if(note.includes('~')) {
+                    note = processTiedNote(note);
+                    possible_duration = lilyDurationToToneJSDuration[note];
+                    if(possible_duration) {
+                        current_duration = possible_duration;
+                    }
+                } else {
+                    // decipher duration and use runningTotal to calc this_location            
+                    possible_duration = lilyNoteToToneJSDuration(note);
+                    if(possible_duration) {
+                        current_duration = possible_duration;
+                    }
                 }
-                
                 runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
                 this_location = Tone.Time(runningTotal).toBarsBeatsSixteenths();
                 console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
@@ -1914,10 +1952,20 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                 one_phrase_str = '';
             } else {
                 note = element;
-                // decipher duration and keep runningTotal
-                possible_duration = lilyNoteToToneJSDuration(note);
-                if(possible_duration) {
-                    current_duration = possible_duration;
+
+                // look for tied notes
+                if(note.includes('~')) {
+                    note = processTiedNote(note);
+                    possible_duration = lilyDurationToToneJSDuration[note];
+                    if(possible_duration) {
+                        current_duration = possible_duration;
+                    }
+                } else {
+                    // decipher duration and keep runningTotal
+                    possible_duration = lilyNoteToToneJSDuration(note);
+                    if(possible_duration) {
+                        current_duration = possible_duration;
+                    }
                 }
                 runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
                 console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
