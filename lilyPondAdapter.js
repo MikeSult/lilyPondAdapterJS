@@ -1712,6 +1712,7 @@ if(mylilyInputNotes1) {
         "1~2.": "1n + 2n + 4n", "1~2": "1n + 2n", "1~4" : "1n + 4n",
         "1~4.": "1n + 4n + 8n", "1~8": "1n + 8n", "1~1": "2*1n",
         "1~8.": "1n + 8n + 16n", 
+        "2~1": "1n + 2n", "2~1~1~1": "2n + 1n + 1n + 1n",
         "2.~8": "2n + 4n + 8n", "2~2": "2n + 2n", "2.~2.": "2n + 4n + 2n + 4n", 
         "2.~4": "2n + 4n + 4n", "2.~2": "2n + 4n + 2n", "2.~1": "2n + 4n + 1n", "2~2.": "2n + 2n + 4n", 
         "2~4": "2n + 4n", "2~8": "2n + 8n", "2~1": "2n + 1n",
@@ -1905,7 +1906,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
     var note = '';
     var elements = [];
     var is_a_note = false;
-    var validNotes = ['a','b','c','d','e','f','g'];
+    var validNotes = ['a','b','c','d','e','f','g','r'];
     var first_note = false;
     
     var myMeter = meter? meter: 4;
@@ -1952,7 +1953,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                 one_phrase_str = '';
             } else {
                 note = element;
-
+                
                 // look for tied notes
                 if(note.includes('~')) {
                     note = processTiedNote(note);
@@ -2276,8 +2277,12 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                 aDuration = oneToken.slice(1);
             }
             if(aDuration !== '') {
-                // process lily duration in to toneDuration
+                // process lily duration into toneDuration
                 currentDuration = lilyDurationToToneJSDuration[aDuration];
+                if(currentDuration === undefined) {
+                    alert(''+aDuration+' === undefined');
+                    return [[],[]];
+                }
 //                console.log('currentDuration='+currentDuration+' currentDuration.length='+currentDuration.length);
             }
 //            console.log('aNote='+aNote);
