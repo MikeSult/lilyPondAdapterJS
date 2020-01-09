@@ -133,7 +133,6 @@ var lpAdapter = (function() {
     
     // pitches = list of pitch_OctaveNumbers 
     // durations = list of rhythms, possibly containing rests
-//    function makeLilyNotes(pitches, durations, keySignatures, romanNumerals) {
     function makeLilyNotes(pitches, durations, keySignatures, romanNumerals, errors) {
         var errorNoteHighlightInProgress = false;
         var errorRestHighlightInProgress = false;
@@ -1634,6 +1633,7 @@ if(mylilyInputNotes1) {
 // then use lilyNote = createTiedLilyCode(lilyNote, lilyDuration)
     var durationToLilyDuration = {
 //        "1n+2n": "1.",
+        "1n + 2n" : "1.", 
         "1n" : "1", 
         "2n + 4n": "2.", "2n + 4n + 8n": "2..",
         "2n+4n": "2.", "2n+4n+8n": "2..",
@@ -1651,16 +1651,17 @@ if(mylilyInputNotes1) {
 
 // tied notes ---------------------
  
-        "2n + 4n + 2n + 4n": "2.~2.", 
+        "2n + 4n + 2n + 4n": "2.~2.", "1n + 1n + 1n": "1~1~1",
         "1n + 2n": "1~2", "1n+2n": "1~2", "1n + 2n + 4n": "1~2.",
         "1n + 4n" : "1~4", "1m + 4n" : "1~4", "1n + 4n + 8n" : "1~4.",
         "1n+4n" : "1~4", "1m+4n" : "1~4", "1n + 4n + 8n" : "1~4.",
         "1n + 8n": "1~8", "2*1n": "1~1", "1n + 8n + 16n": "1~8.",
+        "2n + 4n + 4n + 8n": "2.~4.", 
         "2n + 4n + 8n": "2.~8", "2n + 4n + 4n": "2.~4", "2n + 2n": "2~2", "2n + 4n + 2n": "2.~2",
-        "2n + 4n + 1n": "2.~1", "2n + 2n + 4n": "2~2.",
-        "2n + 4n": "2~4", "2n + 8n": "2~8", "2n + 1n": "2~1",
-	"4n + 8n + 2n": "4.~2", "4n + 2n + 4n": "4~2.", "4n + 2n": "4~2",
-        "4n + 16n": "4~16", "4n + 8n + 16n": "4~8.",
+        "2n + 4n + 1n": "2.~1", "2n + 2n + 4n": "2~2.", "2n + 4n + 8n": "2~4.",
+        "2n + 4n": "2~4", "2n + 8n": "2~8", "2n + 1n": "2~1", "2n + 8n + 16n": "2~8.", "2n + 16n": "2~16",
+	    "4n + 8n + 2n": "4.~2", "4n + 2n + 4n": "4~2.", "4n + 2n": "4~2",
+        "4n + 16n": "4~16", "4n + 8n + 16n": "4~8.", "4n + 4n + 8n": "4~4.",
         "4n + 8n + 4n": "4.~4", "4n + 8n + 8n": "4.~8",
         "4n + 4n": "4~4", "4n+4n": "4~4", "4n + 1n": "4~1",
         "8n + 8n": "8~8", "8n + 2n + 4n": "8~2.", "8n + 4n + 8n": "8~4.",
@@ -1698,6 +1699,7 @@ if(mylilyInputNotes1) {
 //----------------------------
     var lilyDurationToToneJSDuration = {
 //        "1n+2n": "1.",
+	    "1." : "1n + 2n", 
 	    "1" : "1n", 
         "2.": "2n + 4n", "2..": "2n + 4n + 8n",
 	    "2" : "2n", // "2t" : "2",
@@ -1711,15 +1713,17 @@ if(mylilyInputNotes1) {
 // tied notes ---------------------
         "1~2.": "1n + 2n + 4n", "1~2": "1n + 2n", "1~4" : "1n + 4n",
         "1~4.": "1n + 4n + 8n", "1~8": "1n + 8n", "1~1": "2*1n",
-        "1~8.": "1n + 8n + 16n", 
-        "2~1": "1n + 2n", "2~1~1~1": "2n + 1n + 1n + 1n",
-        "2.~8": "2n + 4n + 8n", "2~2": "2n + 2n", "2.~2.": "2n + 4n + 2n + 4n", 
+        "1~8.": "1n + 8n + 16n", "1~1~1": "1n + 1n + 1n",
+        "2~1": "2n + 1n", "2~1~1~1": "2n + 1n + 1n + 1n",
+        "2.~8": "2n + 4n + 8n", "2~2": "2n + 2n", 
+        "2.~2.": "2n + 4n + 2n + 4n", "2.~4.": "2n + 4n + 4n + 8n", 
         "2.~4": "2n + 4n + 4n", "2.~2": "2n + 4n + 2n", "2.~1": "2n + 4n + 1n", "2~2.": "2n + 2n + 4n", 
         "2~4": "2n + 4n", "2~8": "2n + 8n", "2~1": "2n + 1n",
+        "2~4.": "2n + 4n + 8n", "2~8.": "2n + 8n + 16n", "2~16": "2n + 16n",
         "4.~2": "4n + 8n + 2n", "4.~4": "4n + 8n + 4n", "4.~8": "4n + 8n + 8n",
-        "4~2.": "4n + 2n+ 4n", "4~2": "4n + 2n", "4~16": "4n + 16n",
+        "4~2.": "4n + 2n + 4n", "4~2": "4n + 2n", "4~16": "4n + 16n", "4~4.": "4n + 4n + 8n",
         "4~4": "4n + 4n", "8~8": "8n + 8n", "4~1": "4n + 1n",
-        "8~2.": "8n + 2n + 4n", "8~8": "8n + 8n", "8~4.": "8n + 4n + 8n", "8~4": "8n + 4n",
+        "8~2.": "8n + 2n + 4n", "8~4.": "8n + 4n + 8n", "8~4": "8n + 4n",
         "8~1": "8n + 1n", "8~2": "8n + 2n", "8~1.": "8n + 1n + 2n", "8~16": "8n + 16n",
         "4~8": "4n + 8n", "4~8.": "4n + 8n + 16n", "16~4": "16n + 4n", "16~2": "16n + 2n",
         "16~2.": "16n + 2n + 4n",  "16~1": "16n + 1n", "16~4.": "16n + 2n + 8n",
@@ -1922,7 +1926,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
             ; // continue
         } else {
             if (element.includes(myMarker)) {
-                console.log('fermata found at index='+index);
+//                console.log('fermata found at index='+index);
 
                 elements = element.split('\\');
                 note = elements[0];
@@ -1943,7 +1947,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                 }
                 runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
                 this_location = Tone.Time(runningTotal).toBarsBeatsSixteenths();
-                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
+//                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
                 one_phrase = [last_location, this_location];
                 one_phrase_str = one_phrase.join(',');
                 
@@ -1969,16 +1973,314 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                     }
                 }
                 runningTotal = Tone.Time(runningTotal) + Tone.Time(current_duration)
-                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
+//                console.log('note='+note+' current_duration='+current_duration+' this_location='+this_location+' runningTotal='+runningTotal)
             }
 //            console.log('note='+note);
         }        
     });
-    console.log('phrases_start_end='+phrases_start_end);
+//    console.log('phrases_start_end='+phrases_start_end);
     return phrases_start_end;
 }
 
 //---------------------------------------------------------------------
+
+//----------- new markup score code ----------------------------------------------------------
+/**
+ * this function takes a lilypond string and an array of indices and colors
+ * @param {string} lilyCode 
+ * @param {object} markupIndices  
+ * @returns {string} lilyCode with colors added at indices
+ * @example
+ * var lilyCode = "\\relative c'' { b4 b a g fis2 e2\\fermata b'4 cis d b e2 \\bar \"|.\" }";
+ * var markupIndices = [[5,'#red'],[10,'#black']];
+ * var results = MarkupLilyPondMelody(lilyCode, markupIndices);
+ */
+function MarkupLilyPondMelody(lilyCode, markupIndices) {
+    var markedLilyCode = '';
+    var firstNoteOffset = 0;
+    var i = 0;
+    var markupLength = markupIndices.length;
+    var foundFirstNote = false;
+    var currentColor =  '#(x11-color "black")';
+    var trimmedLily = lilyCode.trim();
+    var noteTokens = trimmedLily.split(/\s+/g); // split at white space
+    noteTokens.forEach( (element, index) => {
+        if(foundFirstNote && element == '|') {
+            firstNoteOffset++;
+        }
+//        console.log('foundFirstNote='+foundFirstNote+'\nindex-firstNoteOffset='+(index-firstNoteOffset)+'\nmarkupIndices['+i+'][0]='+markupIndices[i][0]);
+        if( foundFirstNote && ((index-firstNoteOffset) == markupIndices[i][0]) ) {
+            if(currentColor != markupIndices[i][1]) {
+                markedLilyCode += ' ' + highlightNoteAndStem(markupIndices[i][1]);
+                currentColor = markupIndices[i][1];
+//                console.log('currentColor='+currentColor);
+            }
+			if(i < markupLength-1) {
+				i++;
+			}
+        }
+        if(element == '{') {
+            firstNoteOffset = index ;
+            foundFirstNote = true;
+        }
+        markedLilyCode += ' ' + element;
+//        console.log('element='+element+' index='+index);
+    });
+
+//    console.log('markedLilyCode='+markedLilyCode);
+    return markedLilyCode;
+}
+
+function createMarkupColorIndices(lilyCode, highNoteInfo, lowNoteInfo, largestMelodicIntervalInfo, commonPhrasesInfo) {
+    var trimmedLily = lilyCode.trim();
+    var noteTokens = trimmedLily.split(/\s+/g); // split at white space
+    var len = noteTokens.length;
+    var markupColorIndices = [];
+    const highNoteColor = '#(x11-color "red")';
+    const lowNoteColor = '#(x11-color "blue")';
+    const largestIntervalColor = '#(x11-color "magenta")';
+    const commonPhraseColor = '#(x11-color "ForestGreen")';
+    const blackColor = '#(x11-color "black")';
+    var notesStarted = false;
+    var offset = 0;
+    var foundIndex;
+    var outerloopIndex, i;
+    var oneEntry = [];
+
+    for(i=0; i<len; i++) {
+        if(notesStarted) {
+            oneEntry = []
+            oneEntry.push(i-offset);
+            oneEntry.push(blackColor);
+            markupColorIndices.push(oneEntry);
+        }
+        if(noteTokens[i] == '{') {
+            notesStarted = true;
+            offset = i;
+        }
+    }
+//    console.log('len='+len+' markupColorIndices='+markupColorIndices);
+    // overlay the commonPhrasesInfo
+    // numPhrases = how many arrays of indices and how many different phrases
+    var numPhrases = commonPhrasesInfo[1].length; 
+    var phraseLength;
+    for(var outerloopIndex=0; outerloopIndex < numPhrases; outerloopIndex++) {
+        len = commonPhrasesInfo[1][outerloopIndex].length;
+        for(var j=0; j<len; j++) {
+            foundIndex = commonPhrasesInfo[1][outerloopIndex][j];
+//            console.log('foundIndex='+foundIndex);
+            phraseLength = commonPhrasesInfo[0][outerloopIndex].length;
+            for(var k=0; k<phraseLength; k++) {
+                markupColorIndices[foundIndex+k][1] = commonPhraseColor;
+//                console.log('markupColorIndices['+(foundIndex+k)+'][1]='+markupColorIndices[foundIndex+k][1]);
+            }
+        }
+    }
+
+    // overlay highNoteInfo
+    len = highNoteInfo[1].length;
+//    console.log('highNoteInfo[1].length='+len);
+    for(i=0; i<len; i++) {
+        foundIndex = highNoteInfo[1][i];
+        markupColorIndices[foundIndex][1] = highNoteColor;
+//        console.log('markupColorIndices['+foundIndex+'][1]='+markupColorIndices[foundIndex][1]);
+    }
+    
+    // overlay lowNoteInfo
+    len = lowNoteInfo[1].length;
+//    console.log('lowNoteInfo[1].length='+len);
+    for(i=0; i<len; i++) {
+        foundIndex = lowNoteInfo[1][i];
+        markupColorIndices[foundIndex][1] = lowNoteColor;
+//        console.log('markupColorIndices['+foundIndex+'][1]='+markupColorIndices[foundIndex][1]);
+    }
+    
+    // overlay largestIntervalInfo
+    len = largestMelodicIntervalInfo[1].length;
+//    console.log('largestMelodicIntervalInfo[1].length='+len);
+    for(i=0; i<len; i++) {
+        foundIndex = largestMelodicIntervalInfo[1][i];
+        markupColorIndices[foundIndex][1] = largestIntervalColor;
+        markupColorIndices[foundIndex+1][1] = largestIntervalColor;
+//        console.log('markupColorIndices['+foundIndex+'][1]='+markupColorIndices[foundIndex][1]);
+    }
+//    console.log('markupColorIndices='+markupColorIndices);
+    return markupColorIndices;
+}
+
+
+
+/*-------------------------------------------------------------------
+
+
+function createMarkupColorIndices(highNoteInfo, lowNoteInfo, largestMelodicIntervalInfo, commonPhrasesInfo) {
+//function createMarkupColorIndices(jsonParameters) {
+    // highNoteInfo sample: ['A5',[5, 11, 44]] name and array of indices where found    
+    // highNoteInfo sample: ['E4',[33, 37, 39]]  name and array of indices where found
+    // largestMelodicIntervalInfo sample: [7,[43]] halfstep size and array of indices where found
+    // commonPhrases sample: [[0,-2,-4,-5],[5, 10]] two elements (each arrays), 
+    // 1: array of numbers indicating intervals of most common phrase
+    // possible multiple phrases (array of arrays)
+    // 2: array of locations where that phrase starts
+    // possible multiple phrases locations (array of arrays)
+    // NOTE phrase length = length of array 1
+    
+    var highNoteIndex = 0;
+    var lowNoteIndex = 0;
+    var largestIntervalIndex = 0;
+    var commonPhraseIndex = 0;
+    var markupColorIndices = [];
+    var completeColorIndices = [];
+
+    // TODO: make the colors user defined    
+    var highNoteColor = '#(x11-color "red")';
+    var lowNoteColor = '#(x11-color "blue")';
+    var largestIntervalColor = '#(x11-color "magenta")';
+    var commonPhraseColor = '#(x11-color "darkgreen")';
+    var blackColor = '#(x11-color "black")';
+    var tempHighestIndex = 0;
+    var highestIndex = 0;
+    var len = 0;
+    var len2 = 0;
+    var i = 0;
+    var oneEntry = [];
+    var loopIndex = 0;
+    var returnToPrevColor = [];
+    var foundIndex;
+
+    // markupColorIndices.push(index, color) pairs for each of the
+    // of the function parameters.
+    // sort by index at the end
+    len = highNoteInfo[1].length;
+    highestIndex = highNoteInfo[1][len-1];
+    for(loopIndex=0; loopIndex<len; loopIndex++) {    
+        // highNote turn off color on next note
+        foundIndex = highNoteInfo[1][loopIndex];
+        oneEntry = [];
+        oneEntry.push(foundIndex, highNoteColor);
+        markupColorIndices.push(oneEntry);
+            
+        if( !returnToPrevColor.includes(foundIndex+1) ) {
+            returnToPrevColor.push(foundIndex+1);
+        }
+    }
+
+    len = lowNoteInfo[1].length;
+    for(loopIndex=0; loopIndex<len; loopIndex++) {    
+        // lowNote turn off color on next note
+        foundIndex = lowNoteInfo[1][loopIndex];
+        oneEntry = [];
+        oneEntry.push(foundIndex, lowNoteColor);
+        markupColorIndices.push(oneEntry);
+            
+        if( !returnToPrevColor.includes(foundIndex+1) ) {
+            returnToPrevColor.push(foundIndex+1);
+        }
+    }
+ 
+    len = largestMelodicIntervalInfo[1].length;
+    highestIndex = largestMelodicIntervalInfo[1][len-1];
+    for(loopIndex=0; loopIndex<len; loopIndex++) {    
+        // largest interval turn off color after two notes
+        foundIndex = largestMelodicIntervalInfo[1][loopIndex];
+		oneEntry = [];
+		oneEntry.push(foundIndex, largestIntervalColor);
+		markupColorIndices.push(oneEntry);
+
+        if( !returnToPrevColor.includes(foundIndex+2) ) {
+            returnToPrevColor.push(foundIndex+2);
+        }
+    }
+
+    var numPhrases = commonPhrasesInfo[1].length; 
+    // numPhrases = how many array of indices and how many different phrases
+//    console.log('numPhrases='+numPhrases);
+//    console.log('commonPhrasesInfo[1][numPhrases-1].length='+len);
+    var phraseLength;
+    for(var outerloopIndex=0; outerloopIndex < numPhrases; outerloopIndex++) {
+        len = commonPhrasesInfo[1][outerloopIndex].length;
+        for(var j=0; j<len; j++) {
+            foundIndex = commonPhrasesInfo[1][outerloopIndex][j];
+//            console.log('commonPhrasesInfo[1]['+outerloopIndex+']['+j+']='+foundIndex);
+			oneEntry = [];
+			oneEntry.push(foundIndex, commonPhraseColor);
+			markupColorIndices.push(oneEntry);
+
+            // return to prev color after phraseLength
+            phraseLength = commonPhrasesInfo[0][outerloopIndex].length;
+
+            if( !returnToPrevColor.includes(foundIndex+phraseLength) ) {
+                returnToPrevColor.push(foundIndex+phraseLength);
+            }
+        }
+    }
+
+    markupColorIndices.sort(function(a, b){return a[0]-b[0]});
+    returnToPrevColor.sort(function(a, b){return a-b});
+//    console.log('markupColorIndices='+markupColorIndices);
+    console.log('returnToPrevColor='+returnToPrevColor);
+    completeColorIndices = addReturnToPrevColor(markupColorIndices, returnToPrevColor);
+    console.log('completeColorIndices='+completeColorIndices);
+    return completeColorIndices;
+}
+//------------------------------------------------------------*/
+
+
+function addReturnToPrevColor(colorArray, returnToPrevColorArray) {
+    var oneColor = [];
+    var oneEntry = [];
+    var prevColor = '#(x11-color "black")';
+    var element;
+    var locationHasColor = false;
+    var myColorArray = colorArray.slice();
+    var colorArrayLen = colorArray.length;
+    returnToPrevColorArrayLen = returnToPrevColorArray.length;
+    for(var j=0; j<returnToPrevColorArrayLen; j++ ) {
+        locationHasColor = false;
+        element = returnToPrevColorArray[j];
+        for(var i=0; i<colorArrayLen; i++) {
+            if(element == colorArray[i][0]) {
+                oneColor = colorArray[i][1]; 
+                locationHasColor = true;
+            }
+        }
+        if(!locationHasColor && (element+1) != returnToPrevColorArray[j+1]) {
+            // add return to prev 
+			oneEntry = [];
+			oneEntry.push(element, prevColor);
+			console.log('oneEntry='+oneEntry);
+			myColorArray.push(oneEntry);
+        }
+        
+    }
+    return myColorArray.sort(function(a, b){return a[0]-b[0]});
+}
+
+
+function highlightNoteAndStem(color) {
+	var myColor = (color !== undefined)? color: "#red";
+	if(myColor[0] != '#') {
+		myColor = "#"+myColor;
+	}
+	return '\\override NoteHead.color = '+myColor+' \\override Stem.color = '+myColor+' \\override Accidental.color = '+myColor;
+}
+
+function highlightRest(color) {
+	var myColor = (color !== undefined)? color: "#red";
+	if(myColor[0] != '#') {
+		myColor = "#"+myColor;
+	}
+	return '\\override Staff.Rest.color = '+myColor;
+}
+
+
+// client code
+//var lilyCode = "\\relative c'' { b4 b a g fis2 e2\\fermata b'4 cis d b e2 dis\\fermata e4 g fis fis e1\\fermata b4 b c b a a g2\\fermata b4 cis d b e d8 cis cis2 b\\fermata b4 b a g fis2 e1\\fermata \\bar \"|.\" }";
+//var markupIndices = [[5,'#red'],[10,'#black'],[15,'#green'],[20,'#black'],[25,'#blue'],[30,'#black']];
+//var markedMelody = MarkupLilyPondMelody(lilyCode, markupIndices);
+
+
+//---------------------------------------------------------------------*/
 
 
 /**
@@ -2280,7 +2582,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
                 // process lily duration into toneDuration
                 currentDuration = lilyDurationToToneJSDuration[aDuration];
                 if(currentDuration === undefined) {
-                    alert(''+aDuration+' === undefined');
+                    alert(''+aDuration+' === undefined'+' i='+i+' first Five Notes='+noteTokens[3]+' '+noteTokens[4]+' '+noteTokens[5]+' '+noteTokens[6]+' '+noteTokens[7]);
                     return [[],[]];
                 }
 //                console.log('currentDuration='+currentDuration+' currentDuration.length='+currentDuration.length);
@@ -2289,7 +2591,7 @@ function calcPhraseLengths(lilyCode, meter, marker) {
             if(aNote !== 'rest') {
                 toneNote = lilyPitchToTonejsPitch[aNote];
                 if(toneNote === undefined) {
-                    alert(''+oneToken+' === undefined');
+                    alert(''+oneToken+' === undefined'+' i='+i+' first Five Notes='+noteTokens[3]+' '+noteTokens[4]+' '+noteTokens[5]+' '+noteTokens[6]+' '+noteTokens[7]);
                     return [[],[]];
                 }
                 if(hasOctaveSymbol) {
@@ -3270,22 +3572,6 @@ function calcPhraseLengths(lilyCode, meter, marker) {
         return report;
     }
         
-    function highlightNoteAndStem(color) {
-        var myColor = (color !== undefined)? color: "#red";
-        if(myColor[0] != '#') {
-            myColor = "#"+myColor;
-        }
-        return '\\override NoteHead.color = '+myColor+' \\override Stem.color = '+myColor+' \\override Accidental.color = '+myColor;
-    }
-    
-    function highlightRest(color) {
-        var myColor = (color !== undefined)? color: "#red";
-        if(myColor[0] != '#') {
-            myColor = "#"+myColor;
-        }
-        return '\\override Staff.Rest.color = '+myColor;
-    }
-
     function generateReport() {
         var student = makeAssignmentJSON();
         console.log('student.assignment='+student.assignment);
@@ -3404,6 +3690,8 @@ function noteNameToMIDI(noteName)  {
         setCPMelodyParameters: setCPMelodyParameters,
         calcPhraseLengths: calcPhraseLengths,
         translateLilyToToneJS: translateLilyToToneJS,
+        MarkupLilyPondMelody: MarkupLilyPondMelody,
+        createMarkupColorIndices: createMarkupColorIndices,
         lilyPickupMeasure: lilyPickupMeasure,
         getLilyEntryScoreParams: getLilyEntryScoreParams,
         generateReport: generateReport,
