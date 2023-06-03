@@ -74,13 +74,14 @@ var lpAdapter = (function() {
 	var myDurations;
     var myTimeSignature;
     var myKeySignatures;
-    var myRomanNumerals
+    var myRomanNumerals;
     var myPickupMeasure;
     var myPickupMeasureLength;
     var myTempo;
     var myClef;
     var myBarlines;
     var myChords;
+    var myLyrics;
     var myComposer;
     var myOpus;
     var errorIndexArray;
@@ -130,6 +131,9 @@ var lpAdapter = (function() {
     var mylilyInputNotes2 = '';
     var mylilyInputNotes3 = '';
     var mylilyInputNotes4 = '';
+
+// guitar duet score
+    var myGuitarDuetScore = '';
     
     // pitches = list of pitch_OctaveNumbers 
     // durations = list of rhythms, possibly containing rests
@@ -528,7 +532,7 @@ needs work for rests
 
     function getLilyStartRelativeCode(pitchAndOctave) {
 //        console.log( 'typeof(pitchAndOctave) ='+typeof(pitchAndOctave));
-        if(typeof(pitchAndOctave) === 'string') {
+        if(typeof(pitchAnctave) === 'string') {
 			var pitch = pitchAndOctave.substring(0 , pitchAndOctave.length-1);
 			var startingOctave = pitchAndOctave.substring(pitchAndOctave.length-1, pitchAndOctave.length);
 			var lilyCode = '\\relative ' + pitchToLilyPitch[pitch];        
@@ -610,7 +614,10 @@ needs work for rests
          '8': '\\relative c\'\'\'\'\' ' 
     }
     
-    
+    function getGuitarDuetScore(){
+        return myGuitarDuetScore;
+    }
+
     function getLilyOctaveMark(pitchAndOctave, pitchAndOctavePrev) {
         var octaveMarkCounter = 0;
         var octaveMark = "";
@@ -753,9 +760,16 @@ needs work for rests
         myKeySignatures = key? [key]: ['c \\major','c \\major','c \\major','c \\major','c \\major'];
 //        console.log('myKeySignatures='+myKeySignatures)
     }
-    function setRomanNumerals(num) {
-        myRomanNumerals = num? num: ['','','','',''];
+    function setRomanNumerals(rNumerals) {
+//        console.log(rNumerals);
+        myRomanNumerals = rNumerals? rNumerals: ''; // default used to be ['','','','',''] ???
+//        console.log(myRomanNumerals);
     }
+
+    function setLyrics(lyrics) {
+        myLyrics = lyrics? lyrics: '';
+    }
+
     function setPickupMeasureLength(pickupLen) {
 //        console.log('setPickupMeasureLength(): pickupLen='+pickupLen);
 //        myPickupMeasureLength = pickupLen? getLilyDuration(pickupLen): '';
@@ -827,6 +841,15 @@ needs work for rests
         return measureNumbers;
     }
 
+    function getHarmonicAnalysis() {
+        return myRomanNumerals; // already formatted lilyPond string.
+    }
+
+    function getChords(){
+        return myChords; // already formatted lilyPond string
+    }
+
+    /*------------------------------------
     function getRomanNumerals() {
         var romanNums = '';;
         for(var i=0; i<myRomanNumerals.length; i++) {
@@ -834,6 +857,8 @@ needs work for rests
         }
         return romanNums;
     }
+    //-----------------------------------------*/
+
     function getTimeSignatureNumericTotal() {
         return calcMeterNumericTotal();
     }
@@ -1015,6 +1040,7 @@ needs work for rests
  * lpAdapter.setChoraleScoreParameters(jsonConfig);
  */
     function setChoraleScoreParameters(json) {
+//        console.log('setChoraleScoreParameters');
         myJSONType = json.jsonType? json.jsonType: 'chorale';
         setNotesAndDurations(json.notes1, json.durations1);
         setNotesAndDurations2(json.notes2, json.durations2);
@@ -1029,6 +1055,8 @@ needs work for rests
         }
         setKeySignatures(json.keySig);
         setRomanNumerals(json.romanNumerals)
+//        console.log("json.romanNumerals="+json.romanNumerals);
+        setLyrics(json.lyrics)
         setTimeSignature(json.timeSig);
         setClef(json.clef);
         setTempo(json.tempo);
@@ -1238,10 +1266,13 @@ function createLilyPondFile(evaluateBool) {
         }
         var partialTag = '';
         var fileContent = basicHeader();
+        // global guitar duet score
+        myGuitarDuetScore = basicHeader();
  
         // chorale has it's own format
         if(myJSONType === 'chorale') {
             fileContent += makeLilyScore();
+            myGuitarDuetScore += makeGuitarDuetScore();
             return fileContent;
         }
         
@@ -1290,7 +1321,7 @@ function createLilyPondFile(evaluateBool) {
         header += '%} \n';
         header += '\\version "2.18.2"\n';
         header += '\\header { \n  title = \"'+myFileName+'\"\n';
-        header += 'composer = "'+myComposer+'"\n  opus = "'+myOpus+'"\n}\n';
+        header += '  composer = "'+myComposer+'"\n  opus = "'+myOpus+'"\n}\n';
         return header;
     }
 
@@ -1505,6 +1536,7 @@ function createLilyPondFile(evaluateBool) {
     }
     
 function makeChoraleScore() {
+//    console.log('makeChoraleScore()');
     var theTimeSig = (myTimeSignature == undefined)? '4/4': myTimeSignature;
     var theTempo = (myTempo == undefined)? '4=96': myTempo;
     var thePickupLength = (myPickupMeasureLength == undefined)? '' : myPickupMeasureLength;
@@ -1514,7 +1546,7 @@ function makeChoraleScore() {
     var tenorInput = makeLilyNotes(myNotes3, myDurations3, myKeySignatures, myRomanNumerals);
     var bassInput = makeLilyNotes(myNotes4, myDurations4, myKeySignatures, myRomanNumerals);
     
-//    console.log('myNotes='+myNotes+' myDurations='+myDurations+' sopranoInput='+sopranoInput);
+//    console.log('myNotes='+myNotes+'\nmyDurations='+myDurations+'\nsopranoInput='+sopranoInput+'\nmylilyInputNotes1='+mylilyInputNotes1);
 
 	var choraleTemplate = 'Timeline = {   \n' +
 	'  \\time ' + theTimeSig + '  \n' +  
@@ -1523,15 +1555,21 @@ function makeChoraleScore() {
 	if(thePickupLength !== "") {
 	    choraleTemplate += '  \\partial ' + thePickupLength + '  \n';
     }
+	choraleTemplate += '} \n'; 
 	
-	// not needed?
-//	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||" \\break  \n' +
-//	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||"  \n' +
+    choraleTemplate += '\\paper {\n' +
+    "  indent = 0\n" +
+    "  #(set-global-staff-size 24)\n" +
+    "  system-system-spacing =\n" +
+    "  #'((basic-distance . 18)\n" + 
+    "    (minimum-distance . 14)\n" +
+    "    (padding . 1)\n" +
+    "    (stretchability . 60))\n" + 
+    "}\n\n";
 
-//var useNewCode = true;
 
 if(mylilyInputNotes1) {
-	choraleTemplate += '} \n' + 
+	choraleTemplate += '\n' + 
 
 	'SopranoMusic = ' + mylilyInputNotes1 + '\n' +
 
@@ -1542,7 +1580,7 @@ if(mylilyInputNotes1) {
 	'\nBassMusic =  ' + mylilyInputNotes4 + '\n';
 
 } else {
-	choraleTemplate += '} \n' + 
+	choraleTemplate += '\n' + 
 
 	'SopranoMusic = ' + sopranoInput + 
 	
@@ -1553,12 +1591,23 @@ if(mylilyInputNotes1) {
 	'\nBassMusic =  ' + bassInput;
 }
     choraleTemplate += '\nglobal = { \\key ' + myKeySignatures[0] + 
+	'\n} \n\n';
+
+
+//    console.log(myChords);
+    if(myChords){
+        choraleTemplate += myChords + '\n'; // this defines \harmonies
+    }
+//    console.log(myRomanNumerals);
+    if(myRomanNumerals){
+        choraleTemplate += myRomanNumerals + '\n'; // this defines \romanNums
+    }
 	
-	'\n} \n' +
-	
-	'\\score {  % Start score \n' +
-	'  << \n' +
-	'    \\new PianoStaff <<  % Start pianostaff \n' +
+    
+	choraleTemplate += '\\score {  % Start score \n' +
+	'  << \n';
+
+	choraleTemplate += '    \\new PianoStaff <<  % Start pianostaff \n' +
 	'      \\new Staff <<  % Start Staff = RH \n' +
 	'        \\global \n' +
 	'        \\clef "treble"  \n' +
@@ -1587,8 +1636,20 @@ if(mylilyInputNotes1) {
 	'          \\BassMusic \n' +
 	'        >>  % End Voice = "Bass" \n' +
 	'      >>  % End Staff = LH \n' +
-	'    >>  % End pianostaff  \n' +
-	'  >> \n' +
+    '    >>  % End pianostaff  \n';
+
+    if(myChords){
+        choraleTemplate += '       \\new ChordNames {\n' +
+        '         \\set chordChanges = ##t\n' + 
+        '         \\harmonies\n' +
+        '       }\n';
+    }
+
+    if(myRomanNumerals){
+        choraleTemplate += '       \\new Lyrics   \\romanNums\n';
+    }
+
+    choraleTemplate += 	'  >> \n' +
 	'}  % End score \n';
 	
 	
@@ -1601,6 +1662,155 @@ if(mylilyInputNotes1) {
 
 	return choraleTemplate;
 }
+
+function oneOctaveHigher(lilyPondNotesWithRelativeOctave){
+    const splitFile = lilyPondNotesWithRelativeOctave.split('{');
+    let relativeOctaveMark = splitFile[0];
+
+    // check for ","
+    let octaveMark = relativeOctaveMark.replace(",", "");
+    if(octaveMark.length == relativeOctaveMark.length){
+        // no "," found
+        octaveMark =  relativeOctaveMark.replace("'", "''");
+        if(octaveMark.length == relativeOctaveMark.length){
+            // no "'" or "," found so add "'"
+            octaveMark =  relativeOctaveMark.replace("c", "c'");
+        } else {
+            // found "'", add another
+        }
+    }
+    return octaveMark + " {" + splitFile[1];
+}
+
+function makeGuitarDuetScore() {
+
+    var theTimeSig = (myTimeSignature == undefined)? '4/4': myTimeSignature;
+    var theTempo = (myTempo == undefined)? '4=96': myTempo;
+    var thePickupLength = (myPickupMeasureLength == undefined)? '' : myPickupMeasureLength;
+
+    var sopranoInput = makeLilyNotes(myNotes, myDurations, myKeySignatures, myRomanNumerals);
+    var altoInput = makeLilyNotes(myNotes2, myDurations2, myKeySignatures, myRomanNumerals);
+    var tenorInput = makeLilyNotes(myNotes3, myDurations3, myKeySignatures, myRomanNumerals);
+    var bassInput = makeLilyNotes(myNotes4, myDurations4, myKeySignatures, myRomanNumerals);
+    
+//    console.log('myNotes='+myNotes+' myDurations='+myDurations+' sopranoInput='+sopranoInput);
+
+    var myGuitarSoprano = oneOctaveHigher(mylilyInputNotes1);
+    var myGuitarAlto = oneOctaveHigher(mylilyInputNotes2);
+    var myGuitarTenor = oneOctaveHigher(mylilyInputNotes3);
+    var myGuitarBass = oneOctaveHigher(mylilyInputNotes4);
+
+	var guitarDuetTemplate = 'Timeline = {   \n' +
+	'  \\time ' + theTimeSig + '  \n' +  
+	'  \\tempo ' + theTempo + '  \n';
+	
+	if(thePickupLength !== "") {
+	    guitarDuetTemplate += '  \\partial ' + thePickupLength + '  \n';
+    }
+	
+	// not needed?
+//	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||" \\break  \n' +
+//	'  s2 | s1 | s2 \\breathe s2 | s1 | s2 \\bar "||"  \n' +
+
+//var useNewCode = true;
+
+if(mylilyInputNotes1) {
+	guitarDuetTemplate += '} \n' + 
+
+	'SopranoMusic = ' + myGuitarSoprano + '\n' +
+
+	'\nAltoMusic = ' + myGuitarAlto +  '\n' +
+
+	'\nTenorMusic = ' + myGuitarTenor + '\n' +
+
+	'\nBassMusic =  ' + myGuitarBass + '\n';
+
+} else {
+	guitarDuetTemplate += '} \n' + 
+
+	'SopranoMusic = ' + sopranoInput + 
+	
+	'\nAltoMusic = ' + altoInput +
+	
+	'\nTenorMusic = ' + tenorInput +
+	
+	'\nBassMusic =  ' + bassInput;
+}
+    guitarDuetTemplate += '\nglobal = { \\key ' + myKeySignatures[0] + 
+	'\n  #(set-global-staff-size 24)\n} \n\n';
+
+    guitarDuetTemplate += '\\paper {\n' +
+    "  indent = 0\n" +
+    "  system-system-spacing =\n" +
+    "  #'((basic-distance . 18)\n" + 
+    "    (minimum-distance . 14)\n" +
+    "    (padding . 1)\n" +
+    "    (stretchability . 60))\n" + 
+    "}\n\n";
+
+
+    if(myRomanNumerals){
+        guitarDuetTemplate += myRomanNumerals + '\n'; // this defines \harmonies
+    }
+	
+    
+	guitarDuetTemplate += '\\score {  % Start score \n' +
+	'  << \n';
+
+	guitarDuetTemplate += '    \\new PianoStaff <<  % Start pianostaff \n' +
+	'      \\new Staff <<  % Start Staff = RH \n' +
+	'        \\global \n' +
+	'        \\clef "treble"  \n' +
+	'        \\new Voice = "Soprano" <<  % Start Voice = "Soprano" \n' +
+	'          \\Timeline \n' +
+	'          \\voiceOne \n' +
+	'          \\SopranoMusic \n' +
+	'        >>  % End Voice = "Soprano" \n' +
+    '        \\new Voice = "Tenor" <<  % Start Voice = "Tenor" \n' +
+	'          \\Timeline \n' +
+	'          \\voiceTwo \n' +
+	'          \\TenorMusic \n' +
+	'        >>  % End Voice = "Tenor" \n' +
+    '      >>  % End Staff = RH \n' +
+	'      \\new Staff <<  % Start Staff = LH \n' +
+	'        \\global \n' +
+	'        \\clef "treble" \n' +
+    '        \\new Voice = "Alto" <<  % Start Voice = "Alto" \n' +
+	'          \\Timeline \n' +
+	'          \\voiceOne \n' +
+	'          \\AltoMusic \n' +
+	'        >>  % End Voice = "Alto" \n' +
+    '        \\new Voice = "Bass" <<  % Start Voice = "Bass" \n' +
+	'          \\Timeline \n' +
+	'          \\voiceTwo \n' +
+	'          \\BassMusic \n' +
+	'        >>  % End Voice = "Bass" \n' +
+	'      >>  % End Staff = LH \n' +
+    '    >>  % End pianostaff  \n';
+
+    if(myRomanNumerals){
+        guitarDuetTemplate += '       \\new ChordNames {\n' +
+        '         \\set chordChanges = ##t\n' + 
+        '         \\harmonies\n' +
+        '       }\n';
+    }
+
+    guitarDuetTemplate += 	'  >> \n' +
+	'}  % End score \n';
+	
+	
+/*	
+	'\\paper {  % Start paper block \n' +
+	'  indent = 0     % dont indent first system \n' +
+	'  line-width = 130   % shorten line length to suit music \n' +
+	'}  % End paper block ';
+*/
+
+	return guitarDuetTemplate;
+}
+
+
+
 
     
     var pitchToLilyPitch  = { 
@@ -1667,12 +1877,13 @@ if(mylilyInputNotes1) {
         "8n + 8n": "8~8", "8n + 2n + 4n": "8~2.", "8n + 4n + 8n": "8~4.",
         "8n + 1n": "8~1", "8n + 1n + 2n": "8~1.", "8n + 16n": "8~16",
         "8n + 2n": "8~2", "8n + 4n": "8~4",  "8n+4n": "8~4",
-        "8n+8n": "8~8", "8n+2n": "8~2",
+        "8n+8n": "8~8", "8n+2n": "8~2", "8n + 8n + 16n":"8~8.",
         "16n + 4n": "16~4", "16n + 2n": "16~2", // "4n + 8n": "4~8", 
         "16n + 2n + 4n": "16~2.", "16n + 1n": "16~1",
         "16n + 2n + 8n": "16~4.", "16n + 8n": "16~8",
         "16n + 16n": "16~16",
         "16n + 8n + 4n":"16~8~4", "16n+8n+4n":"16~8~4",
+        "4n + 32n":"4~32", "8n + 8n + 16n":"8~8~16",
 //---------------------------------
 
 // rests
@@ -1696,6 +1907,7 @@ if(mylilyInputNotes1) {
         "d16r" : "r16.", "16r" : "r16", "16tr" : "r16"
     };
 
+    
 //----------------------------
     var lilyDurationToToneJSDuration = {
 //        "1n+2n": "1.",
@@ -1723,11 +1935,12 @@ if(mylilyInputNotes1) {
         "4.~2": "4n + 8n + 2n", "4.~4": "4n + 8n + 4n", "4.~8": "4n + 8n + 8n",
         "4~2.": "4n + 2n + 4n", "4~2": "4n + 2n", "4~16": "4n + 16n", "4~4.": "4n + 4n + 8n",
         "4~4": "4n + 4n", "8~8": "8n + 8n", "4~1": "4n + 1n",
-        "8~2.": "8n + 2n + 4n", "8~4.": "8n + 4n + 8n", "8~4": "8n + 4n",
+        "8~2.": "8n + 2n + 4n", "8~4.": "8n + 4n + 8n", "8~4": "8n + 4n", "8~8.": "8n + 8n + 16n",
         "8~1": "8n + 1n", "8~2": "8n + 2n", "8~1.": "8n + 1n + 2n", "8~16": "8n + 16n",
         "4~8": "4n + 8n", "4~8.": "4n + 8n + 16n", "16~4": "16n + 4n", "16~2": "16n + 2n",
         "16~2.": "16n + 2n + 4n",  "16~1": "16n + 1n", "16~4.": "16n + 2n + 8n",
         "16~8": "16n + 8n","16~8~4":"16n + 8n + 4n", "16~16": "16n + 16n", 
+        "4~32":"4n + 32n", "8~8~16":"8n + 8n + 16n",
 //---------------------------------
 
 // rests
@@ -3701,7 +3914,8 @@ function noteNameToMIDI(noteName)  {
         getNotes2Percentage: getNotes2Percentage,
         getDurations1Percentage: getDurations1Percentage,
         getDurations2Percentage: getDurations2Percentage,
-        getTotalPercentage: getTotalPercentage
+        getTotalPercentage: getTotalPercentage,
+        getGuitarDuetScore: getGuitarDuetScore
     };
     
 })();
