@@ -532,7 +532,7 @@ needs work for rests
 
     function getLilyStartRelativeCode(pitchAndOctave) {
 //        console.log( 'typeof(pitchAndOctave) ='+typeof(pitchAndOctave));
-        if(typeof(pitchAnctave) === 'string') {
+        if(typeof(pitchAndOctave) === 'string') {
 			var pitch = pitchAndOctave.substring(0 , pitchAndOctave.length-1);
 			var startingOctave = pitchAndOctave.substring(pitchAndOctave.length-1, pitchAndOctave.length);
 			var lilyCode = '\\relative ' + pitchToLilyPitch[pitch];        
